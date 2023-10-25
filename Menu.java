@@ -21,6 +21,4 @@ public class Menu {
         this.name = name;
         this.explanation = explanation;
     }
-
-
 }

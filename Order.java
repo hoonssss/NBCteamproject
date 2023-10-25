@@ -1,25 +1,24 @@
 package NBCassignment.JH;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Order {
-    ArrayList<Product> products;
+    ArrayList<Product> orders;
     public Order(){
-        products = new ArrayList<>();
+        orders = new ArrayList<>();
     }
     public void addProducts(Product product){
-        products.add(product);
+        orders.add(product);
     }
-    public ArrayList<Product> getProducts(){
-        return products;
+    public ArrayList<Product> getOrders(){
+        return orders;
     }
     public void clearOrder(){
-        products.clear();
+        orders.clear();
     }
-    public double totalPrice(){
+    public double totalPrice() {
         double result = 0;
-        for(Product product : products){
+        for (Product product : orders) {
             result += product.getPrice();
         }
         return result;
