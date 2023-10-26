@@ -1,4 +1,4 @@
-package NBCassignment.JH;
+package src;
 
 public class Menu {
     private String name;

@@ -1,4 +1,4 @@
-package NBCassignment.JH;
+package src;
 
 public class Product extends Menu{
     private double price;
