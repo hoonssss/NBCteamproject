@@ -158,7 +158,7 @@ public class Main {
             System.out.println("주문 총 가격 : " + waitBox.totalPrice());
             System.out.print("요청 사항 : ");
             List<String> message = messageBox.getMessage();
-            for(String messageBox : message) {
+            for (String messageBox : message) {
                 System.out.println(messageBox);
             }
             System.out.println();
@@ -170,15 +170,15 @@ public class Main {
             System.out.println("대기번호 : " + (waitNumber - 1));
             System.out.print("주문 상품 목록 : ");
             List<Product> completebox = completedBox.getCompleteBoxs();
-            for(Product complete : completebox){
-                System.out.println(complete.getName()+", ");
+            for (Product complete : completebox) {
+                System.out.println(complete.getName() + ", ");
             }
             System.out.println();
             System.out.println("주문 총 가격 : " + completedBox.totalPrice());
             System.out.println("주문 일시 : " + getTimestamp());
             List<String> messages = messageBox.getMessage();
-            System.out.println("요청 사항 : " );
-            for(String message : messages){
+            System.out.println("요청 사항 : ");
+            for (String message : messages) {
                 System.out.println(message);
             }
             System.out.println("5초 후 주문목록으로 이동됩니다. 취소는 1번입니다.");
@@ -189,11 +189,11 @@ public class Main {
             if (timeNumber == 1) {
                 managementProgram();
             }
-        } else if(number == 3){
+        } else if (number == 3) {
             addProductToMenu(order, sc);
-        } else if(number == 4){
+        } else if (number == 4) {
             removeProductFromMenu(order, sc);
-        } else if(number == 5){
+        } else if (number == 5) {
             displayMainMenu(order);
         }
     }
@@ -223,7 +223,7 @@ public class Main {
                 categoryName = "Beer";
                 break;
             default:
-                System.out.println("Invalid category choice.");
+                System.out.println("오류입니다.");
                 return;
         }
 
@@ -236,13 +236,13 @@ public class Main {
         String productExplanation = sc.nextLine();
 
         Product product = new Product(productName,productPrice,productExplanation);
-        List<Product> menu = categoryProducts.get(categoryName);
-        if(menu == null){
-            menu = new ArrayList<>();
-            categoryProducts.put(categoryName,menu);
+        List<Product> addProduct = categoryProducts.get(categoryName);
+        if(addProduct == null){
+            addProduct = new ArrayList<>();
+            categoryProducts.put(categoryName, addProduct);
         }
-        menu.add(product);
-        System.out.println("상품이 메뉴에 추가되었습니다.");
+        addProduct.add(product);
+        System.out.println(productName + " 추가되었습니다.");
     }
 
     private static void removeProductFromMenu(Order order, Scanner sc) {
@@ -270,62 +270,39 @@ public class Main {
                 categoryName = "Beer";
                 break;
             default:
-                System.out.println("Invalid category choice.");
+                System.out.println("오류 입니다.");
                 return;
         }
 
         List<Product> menu = categoryProducts.get(categoryName);
         if (menu != null) {
-            System.out.println("상품 목록:");
+            System.out.println("상품 목록");
             for (int i = 0; i < menu.size(); i++) {
-                System.out.println((i + 1) + ". " + menu.get(i).getName());
+                System.out.println(i + 1 + ". " + menu.get(i).getName());
             }
-
-            System.out.println("삭제할 상품 번호를 선택하세요: ");
-            int productNumber = sc.nextInt();
+            System.out.println("삭제할 번호를 입력해주세요.");
+            int removeNumber = sc.nextInt();
             sc.nextLine();
 
-            if (productNumber >= 1 && productNumber <= menu.size()) {
-                Product removedProduct = menu.remove(productNumber - 1);
-                System.out.println(removedProduct.getName() + " 상품이 메뉴에서 삭제되었습니다.");
-            } else {
-                System.out.println("유효하지 않은 상품 번호입니다.");
+            if (removeNumber >= 1 && removeNumber <= menu.size()) {
+                Product removeProduct = menu.remove(removeNumber - 1);
+                System.out.println(removeProduct.getName() + " 삭제되었습니다.");
+            }else{
+                System.out.println("유효하지 않는 번호입니다.");
             }
-        } else {
-            System.out.println("선택한 카테고리에 상품이 없습니다.");
+        }else {
+            System.out.println("상품이 없습니다.");
+            try {
+                Thread.sleep(3000);
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
         }
     }
-
-    private static List<Product> getCategoryMenu(int categoryChoice, Product product) {
-        List<Product> categoryMenu = new ArrayList<>();
-        switch (categoryChoice) {
-            case 1:
-                categoryMenu = createBurger();
-                categoryMenu.add(product);
-                break;
-            case 2:
-                categoryMenu = createForzenCustard();
-                categoryMenu.add(product);
-                break;
-            case 3:
-                categoryMenu = createDrinks();
-                categoryMenu.add(product);
-                break;
-            case 4:
-                categoryMenu = createBeer();
-                categoryMenu.add(product);
-                break;
-            default:
-                break;
-        }
-        return categoryMenu;
-    }
-
-
-    private static String getTimestamp(){
-        LocalDateTime dateTime = LocalDateTime.now();
+    private static String getTimestamp() {
+        LocalDateTime localDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return dateTime.format(formatter);
+        return localDateTime.format(formatter);
     }
 
     private static List<Product> createBurger() {
@@ -333,10 +310,9 @@ public class Main {
         burger.add(new Product("맥도날드", 5.0, "맛있음"));
         burger.add(new Product("버거킹", 5.5, "맛있음"));
         burger.add(new Product("롯데리아", 4.5, "맛있음"));
-
-        List<Product> addBurgers= categoryProducts.get("Burgers");
-        if (addBurgers != null) {
-            burger.addAll(addBurgers);
+        List<Product> addBurger = categoryProducts.get("Burgers");
+        if(addBurger != null){
+            burger.addAll(addBurger);
         }
         return burger;
     }
@@ -348,7 +324,7 @@ public class Main {
         frozenCustard.add(new Product("바닐라콘", 2.5, "맛있음"));
 
         List<Product> addForzenCustard = categoryProducts.get("Frozen Custard");
-        if(addForzenCustard != null){
+        if (addForzenCustard != null) {
             frozenCustard.addAll(addForzenCustard);
         }
         return frozenCustard;
@@ -359,6 +335,11 @@ public class Main {
         drinks.add(new Product("콜라", 2.0, "맛있음"));
         drinks.add(new Product("사이다", 2.5, "맛있음"));
         drinks.add(new Product("제로추가", 0.5, "맛있음"));
+
+        List<Product> addDrinks = categoryProducts.get("Drinks");
+        if(addDrinks != null){
+            drinks.addAll(addDrinks);
+        }
         return drinks;
     }
 
@@ -367,6 +348,10 @@ public class Main {
         beer.add(new Product("생맥주", 2.0, "시원함"));
         beer.add(new Product("흑맥주", 2.5, "시원함"));
         beer.add(new Product("라거맥주", 2.5, "시원함"));
+        List<Product> addBeer = categoryProducts.get("Beer");
+        if(addBeer != null){
+            beer.addAll(addBeer);
+        }
         return beer;
     }
 }
