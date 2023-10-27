@@ -13,7 +13,6 @@ public class Main {
     static CompletedBox completedBox = new CompletedBox();
     static Map<String, List<Product>> categoryProducts = new HashMap<>();
     static int waitNumber = 1;
-    static CreateProduct createProduct = new CreateProduct();
 
     public static void main(String[] args) throws Exception {
         while (true) {
@@ -49,7 +48,6 @@ public class Main {
             }
             System.out.println("총 금액 : " + order.totalPrice());
         }
-
 
         System.out.println("[ SHAKESHACK MENU ]");
         System.out.println("1. Burgers");
@@ -194,7 +192,7 @@ public class Main {
         } else if(number == 3){
             addProductToMenu(order, sc);
         } else if(number == 4){
-
+            removeProductFromMenu(order, sc);
         } else if(number == 5){
             displayMainMenu(order);
         }
@@ -237,18 +235,22 @@ public class Main {
         System.out.println("상품 설명을 입력하세요: ");
         String productExplanation = sc.nextLine();
 
-        Product product = new Product(productName, productPrice, productExplanation);
-
-        // Update the menu with the new product
-        getCategoryMenu(categoryChoice, product);
-
-        // You can also update the categoryProducts map here
+        Product product = new Product(productName,productPrice,productExplanation);
         List<Product> menu = categoryProducts.get(categoryName);
-        if (menu == null) {
+        if(menu == null){
             menu = new ArrayList<>();
-            categoryProducts.put(categoryName, menu);
+            categoryProducts.put(categoryName,menu);
         }
         menu.add(product);
+
+//        Product product = new Product(productName, productPrice, productExplanation);
+//
+//        List<Product> menu = categoryProducts.get(categoryName);
+//        if (menu == null) {
+//            menu = new ArrayList<>();
+//            categoryProducts.put(categoryName, menu);
+//        }
+//        menu.add(product);
         System.out.println("상품이 메뉴에 추가되었습니다.");
     }
 
@@ -341,9 +343,9 @@ public class Main {
         burger.add(new Product("버거킹", 5.5, "맛있음"));
         burger.add(new Product("롯데리아", 4.5, "맛있음"));
 
-        List<Product> customBurgers = categoryProducts.get("Burgers");
-        if (customBurgers != null) {
-            burger.addAll(customBurgers);
+        List<Product> addBurgers= categoryProducts.get("Burgers");
+        if (addBurgers != null) {
+            burger.addAll(addBurgers);
         }
         return burger;
     }
@@ -353,6 +355,11 @@ public class Main {
         frozenCustard.add(new Product("소프트콘", 2.0, "맛있음"));
         frozenCustard.add(new Product("초코콘", 2.5, "맛있음"));
         frozenCustard.add(new Product("바닐라콘", 2.5, "맛있음"));
+
+        List<Product> addForzenCustard = categoryProducts.get("Frozen Custard");
+        if(addForzenCustard != null){
+            frozenCustard.addAll(addForzenCustard);
+        }
         return frozenCustard;
     }
 
