@@ -1,10 +1,9 @@
 package src;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     static Scanner sc = new Scanner(System.in);
@@ -12,7 +11,9 @@ public class Main {
     static MessageBox messageBox = new MessageBox();
     static waitBox waitBox = new waitBox();
     static CompletedBox completedBox = new CompletedBox();
+    static Map<String, List<Product>> categoryProducts = new HashMap<>();
     static int waitNumber = 1;
+    static CreateProduct createProduct = new CreateProduct();
 
     public static void main(String[] args) throws Exception {
         while (true) {
@@ -48,6 +49,8 @@ public class Main {
             }
             System.out.println("총 금액 : " + order.totalPrice());
         }
+
+
         System.out.println("[ SHAKESHACK MENU ]");
         System.out.println("1. Burgers");
         System.out.println("2. Frozen Custard");
@@ -61,7 +64,9 @@ public class Main {
 
     private static void displayMenu(List<Product> product, Order order, Scanner sc) {
         System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.");
+
         for (int i = 0; i < product.size(); i++) {
+            List<Product> productList = createProduct.getProductList();
             Product products = product.get(i);
             System.out.println(i + 1 + ". " + products.getName() + " | " + products.getPrice() + " | " + products.getExplanation());
         }
@@ -162,20 +167,23 @@ public class Main {
             System.out.println();
             System.out.println("주문 일시 : " + getTimestamp());
             System.out.println("3초 후 완료 주문 목록으로 이동됩니다.");
-            waitBox.clearWaitBoxs();
-            messageBox.clearMessage();
-            Thread.sleep(3000); // 5초후
+            Thread.sleep(3000); // 3초후
+
         } else if (number == 2) {
             System.out.println("대기번호 : " + (waitNumber - 1));
             System.out.print("주문 상품 목록 : ");
-            List<Product> productList = completedBox.getCompleteBoxs();
-            for (Product product : productList) {
-                System.out.print(product.getName() + ", ");
+            List<Product> completebox = completedBox.getCompleteBoxs();
+            for(Product complete : completebox){
+                System.out.println(complete.getName()+", ");
             }
             System.out.println();
             System.out.println("주문 총 가격 : " + completedBox.totalPrice());
             System.out.println("주문 일시 : " + getTimestamp());
+            List<String> messages = messageBox.getMessage();
             System.out.println("요청 사항 : " );
+            for(String message : messages){
+                System.out.println(message);
+            }
             System.out.println("5초 후 주문목록으로 이동됩니다. 취소는 1번입니다.");
             Thread.sleep(3000);
             displayMainMenu(order);
@@ -185,7 +193,7 @@ public class Main {
                 managementProgram();
             }
         } else if(number == 3){
-            createProduct(order, sc);
+            addProductToMenu(order, sc);
         } else if(number == 4){
 
         } else if(number == 5){
@@ -193,7 +201,7 @@ public class Main {
         }
     }
 
-    public static void createProduct(Order order, Scanner sc){
+    private static void addProductToMenu(Order order, Scanner sc) {
         System.out.println("카테고리를 선택하세요");
         System.out.println("1. Burgers");
         System.out.println("2. Frozen Custard");
@@ -202,42 +210,126 @@ public class Main {
         int categoryChoice = sc.nextInt();
         sc.nextLine();
 
-        List<Product> products = new ArrayList<>();
         String categoryName = "";
 
         switch (categoryChoice) {
             case 1:
-                products = createBurger();
                 categoryName = "Burgers";
                 break;
             case 2:
-                products = createForzenCustard();
                 categoryName = "Frozen Custard";
                 break;
             case 3:
-                products = createDrinks();
                 categoryName = "Drinks";
                 break;
             case 4:
-                products = createBeer();
                 categoryName = "Beer";
                 break;
             default:
-                System.out.println("오류 입니다.");
+                System.out.println("Invalid category choice.");
                 return;
         }
 
-        System.out.println("상품명을 작성해주세요 : ");
-        String product = sc.nextLine();
-        System.out.println("상품 가격을 작성해주세요 :");
-        double price = sc.nextDouble();
+        System.out.println("상품명을 입력하세요: ");
+        String productName = sc.nextLine();
+        System.out.println("상품 가격을 입력하세요: ");
+        double productPrice = sc.nextDouble();
         sc.nextLine();
-        System.out.println("상품 설명을 작성해주세요 :");
-        String explanation = sc.nextLine();
+        System.out.println("상품 설명을 입력하세요: ");
+        String productExplanation = sc.nextLine();
 
-        Product addProduct = new Product(product, price, explanation);
-        order.addProducts(addProduct);
+        Product product = new Product(productName, productPrice, productExplanation);
+
+        // Update the menu with the new product
+        getCategoryMenu(categoryChoice, product);
+
+        // You can also update the categoryProducts map here
+        List<Product> menu = categoryProducts.get(categoryName);
+        if (menu == null) {
+            menu = new ArrayList<>();
+            categoryProducts.put(categoryName, menu);
+        }
+        menu.add(product);
+        System.out.println("상품이 메뉴에 추가되었습니다.");
     }
+
+    private static void removeProductFromMenu(Order order, Scanner sc) {
+        System.out.println("카테고리를 선택하세요");
+        System.out.println("1. Burgers");
+        System.out.println("2. Frozen Custard");
+        System.out.println("3. Drinks");
+        System.out.println("4. Beer");
+        int categoryChoice = sc.nextInt();
+        sc.nextLine();
+
+        String categoryName = "";
+
+        switch (categoryChoice) {
+            case 1:
+                categoryName = "Burgers";
+                break;
+            case 2:
+                categoryName = "Frozen Custard";
+                break;
+            case 3:
+                categoryName = "Drinks";
+                break;
+            case 4:
+                categoryName = "Beer";
+                break;
+            default:
+                System.out.println("Invalid category choice.");
+                return;
+        }
+
+        List<Product> menu = categoryProducts.get(categoryName);
+        if (menu != null) {
+            System.out.println("상품 목록:");
+            for (int i = 0; i < menu.size(); i++) {
+                System.out.println((i + 1) + ". " + menu.get(i).getName());
+            }
+
+            System.out.println("삭제할 상품 번호를 선택하세요: ");
+            int productNumber = sc.nextInt();
+            sc.nextLine();
+
+            if (productNumber >= 1 && productNumber <= menu.size()) {
+                Product removedProduct = menu.remove(productNumber - 1);
+                System.out.println(removedProduct.getName() + " 상품이 메뉴에서 삭제되었습니다.");
+            } else {
+                System.out.println("유효하지 않은 상품 번호입니다.");
+            }
+        } else {
+            System.out.println("선택한 카테고리에 상품이 없습니다.");
+        }
+    }
+
+    private static List<Product> getCategoryMenu(int categoryChoice, Product product) {
+        List<Product> categoryMenu = new ArrayList<>();
+        switch (categoryChoice) {
+            case 1:
+                categoryMenu = createBurger();
+                categoryMenu.add(product);
+                break;
+            case 2:
+                categoryMenu = createForzenCustard();
+                categoryMenu.add(product);
+                break;
+            case 3:
+                categoryMenu = createDrinks();
+                categoryMenu.add(product);
+                break;
+            case 4:
+                categoryMenu = createBeer();
+                categoryMenu.add(product);
+                break;
+            default:
+                break;
+        }
+        return categoryMenu;
+    }
+
+
     private static String getTimestamp(){
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -249,6 +341,11 @@ public class Main {
         burger.add(new Product("맥도날드", 5.0, "맛있음"));
         burger.add(new Product("버거킹", 5.5, "맛있음"));
         burger.add(new Product("롯데리아", 4.5, "맛있음"));
+
+        List<Product> customBurgers = categoryProducts.get("Burgers");
+        if (customBurgers != null) {
+            burger.addAll(customBurgers);
+        }
         return burger;
     }
 
