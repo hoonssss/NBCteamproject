@@ -242,15 +242,6 @@ public class Main {
             categoryProducts.put(categoryName,menu);
         }
         menu.add(product);
-
-//        Product product = new Product(productName, productPrice, productExplanation);
-//
-//        List<Product> menu = categoryProducts.get(categoryName);
-//        if (menu == null) {
-//            menu = new ArrayList<>();
-//            categoryProducts.put(categoryName, menu);
-//        }
-//        menu.add(product);
         System.out.println("상품이 메뉴에 추가되었습니다.");
     }
 
