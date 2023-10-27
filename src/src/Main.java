@@ -66,7 +66,6 @@ public class Main {
         System.out.println("아래 상품메뉴판을 보시고 상품을 골라 입력해주세요.");
 
         for (int i = 0; i < product.size(); i++) {
-            List<Product> productList = createProduct.getProductList();
             Product products = product.get(i);
             System.out.println(i + 1 + ". " + products.getName() + " | " + products.getPrice() + " | " + products.getExplanation());
         }
